@@ -77,3 +77,34 @@ Expected health fields:
 - First prediction is slow because the model loads lazily.
 - The app uses CPU mode by default.
 - If prediction crashes on Render, upgrade RAM or keep `MODEL_PATHS` to a single fold.
+
+## Research Notebooks
+
+This repository also contains the research notebooks used to reproduce and adapt ACS-SegNet
+for the SegPath dataset, as described in our accompanying paper (link once posted to arXiv).
+
+- **`ACS_SegNet_SegPath_CORRECTED.ipynb`** — the primary notebook. Contains the 3-fold
+  cross-validation training run, the mask-encoding bug fix, the corrected polynomial LR
+  schedule, and both evaluation protocols (repository per-batch metrics and the paper's
+  micro-averaging protocol). This is the notebook that produced all results tables in the paper.
+- **`ACS_SegNet_Epithelium_only.ipynb`** — single-tissue-class training run (epithelium only).
+- **`ACS_SegNet_SmoothMuscle_only.ipynb`** — single-tissue-class training run (smooth muscle only).
+- **`AACS_SegNet_Endothelium_only.ipynb`** - single-tissue-class training run (endothelium muscle only).
+These notebooks clone the official ACS-SegNet implementation from
+[Torbati et al.](https://github.com/NimaTorbati/ACS-SegNet) at runtime and modify only the
+data pipeline, training loop, and evaluation code — the model architecture itself
+(`model.py` / `DualEncoderUNet`) is unmodified from the original repository.
+
+### Model Weights
+
+We do not include a standalone `train.py`, since training was run interactively in the
+notebooks above. The trained checkpoint used for both evaluation and the deployed web app
+(`checkpoints/ACSSegNet_fold1_best.pth`) is the Fold 1 best-validation-IoU checkpoint produced
+by `ACS_SegNet_SegPath_CORRECTED.ipynb`, tracked via Git LFS in this repository.
+
+### Data
+
+The SegPath dataset is **not redistributed in this repository**. Download it directly from
+[dakomura.github.io/SegPath](https://dakomura.github.io/SegPath/), where it is released under
+a CC-BY-NC-SA 4.0 license (non-commercial use only). The notebooks expect the data in the
+`SegPath_sorted/` folder structure documented in the notebook's configuration cell.
